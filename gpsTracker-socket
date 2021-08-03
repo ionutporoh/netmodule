@@ -1,6 +1,3 @@
-/* DESC: A script for activating WLAN as soon as GPS position (lat,lon) is within a specified range.
- * Copyright (C) 2012 NetModule AG, Switzerland
- */
  
 server = argv[1];
 port = (int) argv[2];
@@ -26,29 +23,34 @@ int initSocket(){
 }
 
 
-sock = initSocket();
 
-while(1) {
-    status = nb_status("gnss");
-    lat = struct_get(status, "GNSS1_LATITUDE");
-    lon = struct_get(status, "GNSS1_LONGITUDE");
 
-	//printf("lat is %s, lon is %s\n", lat, lon);
-    //messageToSent = '{"device_id": "w12988", "lat": "47.9612", "long": "27.45687"}';
-    messageToSent = sprintf('{"device_id": "%s", "lat": "%s", "long": "%s"}', SERIAL, lat, lon);
+void loop(){
+    sock = initSocket();
+    while(1) {
+        status = nb_status("gnss");
+        lat = struct_get(status, "GNSS1_LATITUDE");
+        lon = struct_get(status, "GNSS1_LONGITUDE");
 
-    printf("message %s", messageToSent);
+        messageToSent = sprintf('{"device_id": "%s", "lat": "%s", "long": "%s"}', SERIAL, lat, lon);
 
-    sent = send(sock, messageToSent);
-    if (sent == -1) {
-        printf("Failed to send message\n");
-        sock = initSocket();
+        //printf("message %s", messageToSent);
+
+        sent = send(sock, messageToSent);
+        if (sent == -1) {
+            printf("Failed to send message\n");
+            sock = initSocket();
+        } 
+        printf("Sent %d bytes\n", sent);
+
+        sleep(timeout);
     } 
-    printf("Sent %d bytes\n", sent);
- 
-    sleep(timeout);
 }
+
+
 close(sock);
+
+loop();
 
  
 exit(0);
