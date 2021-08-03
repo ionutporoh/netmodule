@@ -18,6 +18,7 @@ void usage()
     exit(1);
 }
 
+
 int initSocket(){
     sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sock < 0) {
@@ -26,9 +27,12 @@ int initSocket(){
     }
     
     if (connect(sock, server, port) < 0){
-        printf("Could not connect to %s (port %d)\n", server, port);
-        close(sock);
-        exit(1);
+        printf("Could not connect to %s (port %d) Retry!\n", server, port);
+        //close(sock);
+        //exit(1);
+
+        sleep(5);
+        initSocket(); 
     }
     return sock;
 }
