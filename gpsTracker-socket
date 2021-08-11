@@ -4,6 +4,7 @@ port = (int) argv[2];
 timeout = (int) argv[3];
 SERIAL = struct_get(nb_status("system"), "SERIAL_NUMBER");
 
+printf("Serial = %s \n", SERIAL);
 
 sock = -1;
 
